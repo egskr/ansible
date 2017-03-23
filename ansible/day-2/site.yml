@@ -32,7 +32,3 @@
   - name: debug
     debug: 
       msg: "Curl status: {{result.stdout}}"
-    become: yes
-    become_user: tomcat_as 
-
-

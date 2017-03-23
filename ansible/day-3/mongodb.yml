@@ -1,0 +1,25 @@
+
+- hosts: localhost
+  connection: local
+
+  vars:
+    mongo_src:
+    - mongodb-linux-x86_64-rhel62-3.4.1
+    - mongodb-linux-x86_64-rhel70-3.4.1
+    - mongodb-linux-x86_64-rhel55-3.2.11
+    - mongodb-linux-x86_64-rhel64-3.2.11
+    - mongodb-linux-x86_64-rhel70-3.2.17
+    - mongodb-linux-x86_64-rhel55-3.0.14
+    - mongodb-linux-x86_64-rhel64-3.0.14
+    - mongodb-linux-x86_64-rhel70-3.0.14
+
+  tasks:
+
+  - name: first
+    debug: msg={{ mongo_src | get_mongo_src(ansible_distribution, "7", "3.2" ) }}
+
+  - name: second
+    debug: msg={{ mongo_src | get_mongo_src(ansible_distribution, "6", "3.0" ) }}
+
+  - name: third
+    debug: msg={{ mongo_src | get_mongo_src(ansible_distribution, "7", "3.4" ) }}
