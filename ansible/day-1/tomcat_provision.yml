@@ -1,0 +1,122 @@
+- name: TOMCAT
+  hosts: all
+
+  vars:
+    tomcat_version: '8.5.9'
+    java_version: '1.8.0'
+
+
+  tasks:
+  - name: Install the latest version of Java
+    yum:    
+      name: java
+      state: latest
+    become: yes
+    become_user: root 
+
+
+  - name: Downloading Tomcat Ver. {{vars.tomcat_version}}
+    get_url:
+      url: http://archive.apache.org/dist/tomcat/tomcat-8/v{{vars.tomcat_version}}/bin/apache-tomcat-{{vars.tomcat_version}}.tar.gz
+      dest: /home/vagrant/
+
+
+  - name: Tomcat Group creating
+    group:
+      name: tomcat_as
+      state: present
+    become: yes
+    become_user: root 
+
+  - name: Tomcat User creating
+    user:
+      name: tomcat_as
+      comment: "Tomcat user"
+      group: tomcat_as
+    become: yes
+    become_user: root 
+ 
+  - name: Creating Tomcat directory file
+    file:
+      path: /opt/tomcat/
+      state: directory
+      owner: tomcat_as
+      group: tomcat_as
+    become: yes
+    become_user: root
+
+
+  - name: Unarchiving Tomcat Ver. {{vars.tomcat_version}}
+    unarchive: 
+      src: /home/vagrant/apache-tomcat-{{vars.tomcat_version}}.tar.gz
+      dest: /opt/tomcat
+      remote_src: True
+    become: yes
+    become_user: root 
+
+  - name: Removing archive apache-tomcat-{{vars.tomcat_version}}.tar.gz
+    file:
+      path: apache-tomcat-{{vars.tomcat_version}}.tar.gz
+      state: absent
+    
+
+  - name: Changing owner of Tomcat dir
+    file:
+      path: /opt/tomcat/apache-tomcat-{{vars.tomcat_version}}
+      owner: tomcat_as
+      group: tomcat_as
+      recurse: yes
+    become: yes
+    become_user: root 
+
+
+  - name: Startup Script copying
+    copy:
+      src: /home/student/cm/ansible/day-1/tomcat_startup.sh
+      dest: /etc/rc.d/init.d/tomcat
+      owner: tomcat_as
+      group: tomcat_as
+      mode : a+x
+    become: yes
+    become_user: root 
+
+
+  - name: Replace version
+    replace:
+      dest: /etc/rc.d/init.d/tomcat
+      regexp: 'XXXXX'
+      replace: '{{vars.tomcat_version}}'
+    become: yes
+    become_user: root 
+
+
+  - name: Tomcat starting Ver. {{vars.tomcat_version}}.tar.gz
+    service:
+      name: tomcat
+      state: started
+    become: yes
+    become_user: tomcat_as 
+
+
+  - name: Checking Service status
+    shell: service tomcat status
+    become: yes
+    become_user: root
+
+  - name: Checking Service (pa aux)
+    shell: ps aux | grep tomcat
+
+
+  - name: Checking Curl
+    shell: "curl -sL -w %{http_code} http://127.0.0.1:8080 -o /dev/null"
+    become: yes
+    become_user: root
+
+
+  - name: Get started time
+    shell: |  
+      echo Now: date
+      echo 'Was started:' pid=`ps aux | grep tomcat | grep -v 'worker process is shutting down' | head -1 | awk '{print $2}'`
+      stat -c %z /proc/$pid
+    become: yes
+    become_user: root

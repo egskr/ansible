@@ -1,0 +1,37 @@
+
+- name: Installing nginx
+  yum:
+    name: nginx
+    state: installed
+  become: yes
+  become_user: root 
+
+
+- name: Nginx config copying
+  template:
+      src: vhost.j2
+      dest: /etc/nginx/conf.d/vhost.conf
+  become: yes
+  become_user: root 
+  notify:
+    - nginx_restart
+
+
+- name: Starting nginx
+  service:
+    name: nginx
+    state: started
+  become: yes
+  become_user: root 
+
+
+- shell: |
+    res=`/sbin/service nginx status | grep 'is running'`
+    if [[ $res != '' ]]; then echo STARTED; fi
+  register: result
+
+- name: debug
+  debug: 
+    msg: "nginx status: {{result.stdout}}"
+  become: yes
+  become_user: tomcat_as 

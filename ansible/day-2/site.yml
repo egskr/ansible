@@ -1,0 +1,38 @@
+- name: java, tomcat and nginx installation
+  hosts: vagrant_vm
+
+  roles:
+    - java
+    - tomcat
+    - nginx
+
+
+- name: java, tomcat and nginx checking
+  hosts: vagrant_vm
+
+  roles:
+    - java_test
+    - tomcat_test
+    - nginx_test
+
+- name: Checking tomcat availability from host
+  hosts: vagrant_vm_loc
+
+  tasks:
+  - name: Checking tomcat availability from host
+    shell: |
+     curl -sL -w %{http_code} http://192.168.33.10 -o /dev/null
+     if [ $? -eq 0 ]; then
+      echo '. Curling Successfull'
+     else
+      echo '. Curling Failed'
+     fi
+    register: result
+
+  - name: debug
+    debug: 
+      msg: "Curl status: {{result.stdout}}"
+    become: yes
+    become_user: tomcat_as 
+
+

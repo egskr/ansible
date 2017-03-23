@@ -1,0 +1,36 @@
+#Show created vagrant boxes
+vagrant box list
+
+#Add new vagrant box with XXX from sbeliakou-vagr....
+vagrant box add XXX sbeliakou-vagrant-centos-6.8-x86_64.box
+
+#Remove XXX box
+vagrant box remove XXX
+
+
+
+# Create vagrantfile file into current dirrectory
+vagrant init <box name>
+
+
+#Start VM  (and vm appears in Virtualbox)
+vagrant up 
+
+#Stop vm (Shutdown VM)
+vagrant halt
+
+#Status
+vagrant status
+
+#Removes VM from Virtualbox
+vagrant destroy
+
+
+#Provisioning (our scripts applies during firts initial startup). If we wish to apply provisioning we can:
+vagrant provision
+
+#Connect to VM
+vagrant ssh
+
+#Connect to VM
+vagrant ssh <VM name>
