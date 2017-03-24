@@ -1,0 +1,7 @@
+- hosts: localhost
+
+  vars:
+     state: status
+  tasks:
+  - name: Run module bash_module
+    bashX: state=status
