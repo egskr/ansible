@@ -1,0 +1,25 @@
+---
+# tasks file for tomcat_test
+
+- name: CHECKING RESPONSE CODE TOMCAT
+  uri:
+    url: "http://{{ansible_default_ipv4.address}}:8080"
+    status_code: 200
+    timeout: 30
+  register: result
+  
+
+- name: DEBUG TOMCAT
+  debug: msg="Tomcat response code and server {{result.status, result.server}}"
+
+- name: CHECKING SERVICE TOMCAT
+  shell: |
+    res=`/sbin/service tomcat status`
+    if [[ $res == 'Tomcat is running' ]]; then echo STARTED; fi
+  register: result1
+
+- name: DEBUG TOMCAT
+  debug: msg="Tomcat status {{result1.stdout}}"
+  become: yes
+  become_user: tomcat_as
+  

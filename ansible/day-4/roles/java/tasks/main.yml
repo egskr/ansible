@@ -1,0 +1,9 @@
+---
+# tasks file for java
+
+- name: INSTALLING JAVA
+  yum: 
+    name: '{{java_version}}'
+    state: present
+  become: yes
+  become_user: root

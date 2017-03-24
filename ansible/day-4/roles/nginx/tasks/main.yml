@@ -1,0 +1,24 @@
+---
+# tasks file for nginx
+
+- name: INSTALLING NGINX
+  yum: name=nginx state=present
+  become: yes
+  become_user: root
+  
+- name: REMOVE DEFAULT SITE
+  file: path=/etc/nginx/conf.d/default.conf state='absent'
+  become: yes
+  become_user: root
+
+- name: COPYING VHOSTS FILE
+  become: yes
+  become_user: root
+  template : src=vhosts.j2 dest=/etc/nginx/conf.d/vhosts.conf owner=root group=root 
+  notify: RESTART NGINX 
+
+- name: start nginx
+  service: name=nginx state=started
+  become: yes
+  become_user: root
+  

@@ -1,0 +1,8 @@
+---
+# defaults file for tomcat
+
+tomcat_home: /opt/tomcat/current
+tomcat_user: tomcat_as
+tomcat_group: tomcat_as_group
+tomcat_version: 8.5.9
+

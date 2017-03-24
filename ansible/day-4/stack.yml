@@ -1,0 +1,36 @@
+- name: Task3-Provisioning
+  hosts: localhost
+  
+
+  vars:
+    run: started
+
+  tasks:
+  - name: Provisioning VM
+    bashmod: path=Vagrantfile state={{ run }}
+    register: variables
+  - debug: msg={{ variables }}
+  - add_host:
+      name: nginx_server
+      ansible_host: "{{ variables.ip }}"
+      ansible_port: "{{ variables.port }}"
+      ansible_connection: ssh 
+      ansible_user: "{{ variables.user }}"
+      ansible_ssh_private_key_file: "{{ variables.key }}"
+    when: variables.status == "running"
+
+- name: Task3-Tomcat stack
+  hosts: nginx_server
+
+  roles:
+    - { role: java}
+    - { role: tomcat} #(depends on java_test)
+    - { role: nginx} #(depends on tomcat_test)
+    - { role: java_test}
+    - { role: tomcat_test}
+    - { role: nginx_test}
+
+
+
+
+ 
