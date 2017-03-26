@@ -1,4 +1,3 @@
-
 - hosts: localhost
   connection: local
 
@@ -23,3 +22,4 @@
 
   - name: third
     debug: msg={{ mongo_src | get_mongo_src(ansible_distribution, "7", "3.4" ) }}
+ 

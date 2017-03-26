@@ -1,0 +1,12 @@
+- name: ----------JAVA INSTALLATION----------
+  yum:
+    name: '{{java_version}}'
+    state: installed
+  become: yes
+
+- shell: java -version
+  register: result
+
+- name: debug
+  debug: 
+    msg: "Java {{result.stderr}} has installed"

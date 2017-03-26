@@ -1,0 +1,21 @@
+  - name: ----------TOMCAT SERVICE STATUS CHECKING----------
+    shell: service tomcat status
+    become: yes
+    become_user: root
+    register: stat_res
+
+  - name: debug stat
+    debug: msg="{{stat_res.stdout_lines}}"
+
+
+  - name: ----------TOMCAT RESPONSE CODE CHECKING----------
+    uri:
+      url: "http://{{ansible_default_ipv4.address}}:8080"
+      status_code: 200
+      timeout: 30
+    register: resp_res
+
+
+  - name: debug availability
+    debug: msg="Responce code to http://{{ansible_default_ipv4.address}}:8080 is {{resp_res.status}}"
+  

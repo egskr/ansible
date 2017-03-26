@@ -1,0 +1,20 @@
+  - name: ----------NGINX SERVICE STATUS:----------
+    shell: /sbin/service nginx status
+    register: res_stat
+
+  - name: debug_stat
+    debug: msg="{{res_stat.stdout_lines}}"
+
+
+  - name: Get started time
+    shell: |  
+      echo Now:
+      date
+      pid=`/bin/ps aux | grep nginx | grep -v grep | head -1 | awk '{print $2}'`
+      echo Nginx started in:
+      /usr/bin/stat -c %z /proc/$pid
+    become: yes
+    register: res_time
+
+  - name: debug_time
+    debug: msg="{{res_time.stdout_lines}}"

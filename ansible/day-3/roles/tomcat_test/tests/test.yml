@@ -1,0 +1,7 @@
+  - name: ----------TOMCAT SERVICE STATUS CHECKING----------
+    shell: service tomcat status
+    become: yes
+    become_user: root
+
+  - name: ----------TOMCAT PROCESS CHECKING----------
+    shell: ps aux | grep tomcat

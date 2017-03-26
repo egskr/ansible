@@ -1,7 +1,39 @@
-- hosts: localhost
-
+- name: ----------WEB SERVER PROVISIONING----------
+  hosts: localhost
+  
   vars:
-     state: status
+    option: started
+
   tasks:
-  - name: Run module bash_module
-    bashX: state=status
+  - name: debug
+    debug: 
+      msg: "Launched with option: {{option}}"
+
+  - name: ----------VAGRANT PROVISIONING----------
+    vagrant_manager_module: path=Vagrantfile state={{option}}
+    register: variables
+  - debug: msg={{variables}}
+  - add_host:
+      name: web_server
+      ansible_host: "{{variables.ip}}"
+      ansible_port: "{{variables.port}}"
+      ansible_user: "{{variables.user}}"
+      ansible_connection: "ssh"       
+      ansible_ssh_private_key_file: "{{variables.key}}"
+    when: variables.status == "running"
+
+- name: ----------SOFTWARE INSTALLATION----------
+  hosts: web_server
+
+  roles:
+    - java
+    - tomcat
+    - nginx
+    - java_test
+    - tomcat_test
+    - nginx_test
+
+
+
+
+ 
