@@ -1,0 +1,53 @@
+deploy.yml
+
+- name: DEPLOYING HELLO-WAR
+  hosts: localhost
+
+  vars:
+    wars: mnt-lab
+
+  roles:
+  - { role: deploy}
+
+
+- name: UPDATE DEPLOY INFO
+  hosts: servers
+  become: True
+  tasks:
+  - name: create /var/lib/tomcat/webapps/deploy-info.txt
+    shell: mkdir -p /var/lib/tomcat/webapps
+  - name: create file
+    shell: touch /var/lib/tomcat/webapps/deploy-info.txt
+  
+  - name: Get Time Deploy
+    shell: echo 'Deploy time:' $(cat /opt/tomcat/8.5.9/logs/catalina.out | grep mnt-lab | tail -1 | awk '{print  $2}') > /var/lib/tomcat/webapps/deploy-info.txt 
+  
+  - name: Get User
+    shell: echo 'Deploy user:' `awk -v val=501 -F ":" '$3==val{print $1}' /etc/passwd ` >> /var/lib/tomcat/webapps/deploy-info.txt
+    
+    
+    deploy role (task)
+    
+    - name: DEPLOY
+  deploy: path=/home/student/cm/ansible/day-4/hello-war user=root url=192.168.100.100:/opt/tomcat/8.5.9/webapps buildNumber=100 war=mnt-lab.war
+
+
+
+
+
+
+  deploy.sh
+    
+    #!/bin/bash
+source $1
+echo 'Build time:' $(date) > $path/src/main/resources/build-info.txt
+echo 'Build Machine name:' $(hostname) >> $path/src/main/resources/build-info.txt
+echo 'Build User name:' $(whoami) >> $path/src/main/resources/build-info.txt
+
+cd $path
+mvn clean package -D$buildNumber &>/dev/null
+
+cd $path/target
+sshpass -p "vagrant"  scp $path/target/$war $user@$url
+
+printf '{"failed": false, "changed": true}'

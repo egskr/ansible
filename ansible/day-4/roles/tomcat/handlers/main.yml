@@ -1,4 +1,0 @@
-- name: RESTART TOMCAT
-  service:
-    name: tomcat
-    state: restarted

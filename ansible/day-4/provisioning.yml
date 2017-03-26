@@ -1,0 +1,27 @@
+- name: Pre deploy
+  hosts: vagrant_vm
+
+  vars:
+    war: mnt-lab
+
+  roles:
+    - java
+    - tomcat
+    - nginx
+    - java_test
+    - tomcat_test
+    - nginx_test
+
+
+
+
+
+
+#- name: java, tomcat and nginx checking
+#  hosts: vagrant_vm
+
+#  roles:
+#    - java_test
+#    - tomcat_test
+#    - nginx_test
+

@@ -1,0 +1,2 @@
+- name: ----------DEPL----------
+  deploy_m: url=192.168.33.10:/opt/tomcat/apache-tomcat-8.5.12/webapps war={{war}}.war path=/home/student/cm/ansible/day-4/hello-war user=root  buildNumber=100 
