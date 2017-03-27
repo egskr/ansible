@@ -1,8 +1,6 @@
-- name: Pre deploy
-  hosts: vagrant_vm
 
-  vars:
-    war: mnt-lab
+- name: ----------DEPLOYMENT----------
+  hosts: web_server
 
   roles:
     - java
@@ -11,49 +9,23 @@
     - java_test
     - tomcat_test
     - nginx_test
-    
+    - deploy_war
+
+
+- name: ----------DEPLOY WEBAPP----------
+  hosts: localhost
+  tasks:
+  - name: calling sh
+    deploy: url=192.168.33.10 war=mnt-lab.war user=vagrant password=vagrant
+
+- name: ----------INFO UPDATING----------
+  hosts: web_server
+  become: yes
 
   tasks:
-  - name: create /var/lib/tomcat/webapps/deploy-info.txt
-    shell: mkdir -p /var/lib/tomcat/webapps
-    become: yes
-
-  - name: create file
-    shell: touch /var/lib/tomcat/webapps/deploy-info.txt
-    become: yes
-  
-  - name: Get Time Deploy
-    shell: echo 'Deploy time:' $(cat /opt/tomcat/8.5.9/logs/catalina.out | grep mnt-lab | tail -1 | awk '{print  $2}') > /var/lib/tomcat/webapps/deploy-info.txt 
-    become: yes
-  
-  - name: Get User
-    shell: echo 'Deploy user:' `awk -v val=501 -F ":" '$3==val{print $1}' /etc/passwd ` >> /var/lib/tomcat/webapps/deploy-info.txt
-    become: yes
-
-  - name: DEPLOYMENT
-    shell: sshpass -p "vagrant"  scp hello-war/target/{{war}} root@url=192.168.33.10:/opt/tomcat/apache-tomcat-8.5.12/webapps
-    become: yes
-
-
-    #- deploy
-
-
-#- name: DEPLOYMENT
-#  hosts: vagrant_vm
-
- # role:  deploy
-
-
-
-
-
-
-
-#- name: java, tomcat and nginx checking
-#  hosts: vagrant_vm
-
-#  roles:
-#    - java_test
-#    - tomcat_test
-#    - nginx_test
+  - name: Creating and updating
+    shell: |
+     mkdir -p /var/lib/tomcat/webapps
+     cat /opt/tomcat/current/logs/catalina.out | grep mnt-lab | tail -1 | awk '{print  $2}' > /var/lib/tomcat/webapps/deploy-info.txt
+     echo -e `awk -v val=501 -F ":" '$3==val{print $1}' /etc/passwd ` >> /var/lib/tomcat/webapps/deploy-info.txt
 

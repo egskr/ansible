@@ -1,0 +1,16 @@
+
+  - name: ----------TOMCAT ROLE----------
+    become: yes
+    template: src=~/cm/ansible/day-4/tomcat-users.xml dest=/opt/tomcat/current/conf
+    notify:
+     - restart Tomcat
+
+  - name: ----------TOMCAT CONTEXT----------
+    become: yes
+    template: src=~/cm/ansible/day-4/context.xml dest=/opt/tomcat/current/webapps/manager/META-INF
+    notify:
+     - restart Tomcat
+
+  - name: ----------TOMCAT RESTART----------
+    become: yes
+    service: name=tomcat8 state=restarted

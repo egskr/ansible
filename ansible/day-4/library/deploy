@@ -1,0 +1,33 @@
+#!/bin/bash
+
+source $1
+
+if [ -z "$url" ]; then
+    printf '{"failed": true, "msg": "Missing argument: uri"}'
+    exit 1
+fi
+
+if [ -z "$war" ]; then
+    printf '{"failed": true, "msg": "Missing argument: war"}'
+    exit 1
+fi
+
+if [ -z "$user" ]; then
+    printf '{"failed": true, "msg": "Missing argument: username"}'
+    exit 1
+fi
+
+if [ -z "$password" ]; then
+    printf '{"failed": true, "msg": "Missing argument: password"}'
+    exit 1
+fi
+
+output=$(scp mnt-lab.war root@192.168.33.10:/opt/tomcat/current/webapps/")
+
+if [ $? -ne 0 ];then
+    printf '{"failed": true, "msg": "Error", "output": %s}' "$output"
+    exit 1
+else
+    printf '{"changed": true, "failed": false, "msg": "Successful deployment", "output": %s}' "$output"
+    exit 0
+fi

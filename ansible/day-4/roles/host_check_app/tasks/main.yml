@@ -1,0 +1,13 @@
+---
+# tasks file for host_check_app
+ - name: ENSURING THAT APP IS DEPLOYED
+   uri:
+    url: "http://192.168.100.6/mnt-lab/"
+    status_code: 200
+   register: result
+   until: result.status == 200
+   retries: 5
+   delay: 1
+ - name: debug DEployed
+   debug:
+    msg: "mnt-lab.war was successfully deployed"
